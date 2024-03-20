@@ -1,17 +1,30 @@
 import express, { Request, Response } from "express";
 import { TinyRouter } from "./routes/tiny";
+import { GetMongoClient } from "../database/mongo";
+import { Db } from "mongodb";
 
-const app = express();
-const port = 3000;
+let datbaseConnection: Db | undefined = undefined;
+export const DatabaseConnection = (): Db | undefined => {
+  return datbaseConnection;
+};
 
-app.use(express.json());
+async function SetUp() {
+  datbaseConnection = await GetMongoClient();
+}
 
-app.get("/", (req: Request, res: Response) => {
-  res.status(200).send({ message: "Hello World!" });
-});
+SetUp().then(() => {
+  const app = express();
+  const port = 3000;
 
-app.use("/tiny", TinyRouter);
+  app.use(express.json());
 
-app.listen(port, () => {
-  console.log("Server listening on port: ", port);
+  app.get("/", (req: Request, res: Response) => {
+    res.status(200).send({ message: "Hello World!" });
+  });
+
+  app.use("/tiny", TinyRouter);
+
+  app.listen(port, () => {
+    console.log("Server listening on port: ", port);
+  });
 });
