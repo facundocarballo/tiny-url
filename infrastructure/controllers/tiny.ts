@@ -18,6 +18,17 @@ export const Create = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const Get = async (req: Request, res: Response): Promise<void> => {
-  service.Get("");
-  res.status(200).send({ message: "ok" });
+  const value = req.params.id;
+  if (!value) {
+    res.status(404).send({ message: "This url doesn't exist." });
+    return undefined;
+  }
+
+  const bigUrl = await service.Get(value);
+  if (!bigUrl) {
+    res.status(404).send({ message: "This url doesn't exist." });
+    return undefined;
+  }
+
+  res.redirect(bigUrl);
 };

@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import { TinyRouter } from "./routes/tiny";
 import { GetMongoClient } from "../database/mongo";
 import { Db } from "mongodb";
+import { Get } from "./controllers/tiny";
 
 let datbaseConnection: Db | undefined = undefined;
 export const DatabaseConnection = (): Db | undefined => {
@@ -21,6 +22,8 @@ SetUp().then(() => {
   app.get("/", (req: Request, res: Response) => {
     res.status(200).send({ message: "Hello World!" });
   });
+
+  app.get("/:id", Get);
 
   app.use("/tiny", TinyRouter);
 

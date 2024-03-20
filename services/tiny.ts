@@ -11,7 +11,7 @@ export class TinyService {
     return this.repository.Create(bigUrl);
   }
 
-  async Get(shortUrl: string): Promise<string | undefined> {
-    return this.repository.Get(shortUrl);
+  async Get(id: string): Promise<string | undefined> {
+    return this.repository.Get(id);
   }
 }

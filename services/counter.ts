@@ -21,6 +21,10 @@ export class CounterService {
     this.gValue = "-1";
   }
 
+  static DefaultValue(): string {
+    return "000000-1";
+  }
+
   async Load(): Promise<boolean> {
     try {
       const val = await this.repository.Load();

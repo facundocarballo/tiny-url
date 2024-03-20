@@ -10,27 +10,40 @@ export class TinyMongoDB implements TinyRepository {
   async Create(bigUrl: string): Promise<string | undefined> {
     try {
       const res = await counterService.Load();
-      if (!res || counterService.Get() === "000000-1") return undefined;
+      if (!res || counterService.Get() === CounterService.DefaultValue())
+        return undefined;
 
       const db = DatabaseConnection();
       if (!db) return undefined;
 
       const collection = db.collection("URL");
-      console.log({
+      await collection.insertOne({
         shortUrl: counterService.GenerateShortUrl(),
         bigUrl: bigUrl,
       });
-      const r = await collection.insertOne({
-        shortUrl: counterService.GenerateShortUrl(),
-        bigUrl: bigUrl,
-      });
-      console.log("resultado: ", r);
     } catch (err) {
       console.error("Error inserting a new document to MongoDB. ", err);
       return undefined;
     }
   }
-  async Get(shortUrl: string): Promise<string | undefined> {
-    throw new Error("Method not implemented.");
+
+  async Get(id: string): Promise<string | undefined> {
+    try {
+      const res = await counterService.Load();
+      if (!res || counterService.Get() === CounterService.DefaultValue())
+        return undefined;
+
+      const db = DatabaseConnection();
+      if (!db) return undefined;
+
+      const collection = db.collection("URL");
+      const doc = await collection.findOne({ id });
+      if (!doc) return undefined;
+
+      return doc.bigUrl;
+    } catch (err) {
+      console.error("Error reading the document of MongoDB. ", err);
+      return undefined;
+    }
   }
 }
