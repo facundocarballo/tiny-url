@@ -13,8 +13,8 @@ export const Create = async (req: Request, res: Response): Promise<void> => {
       .send({ message: "Please, send a bigUrl in the body request." });
     return undefined;
   }
-  service.Create(bigUrl);
-  res.status(200).send({ message: "ok" });
+  const shortUrl = await service.Create(bigUrl);
+  res.status(200).send({ message: "Short URL created correctly.", shortUrl });
 };
 
 export const Get = async (req: Request, res: Response): Promise<void> => {

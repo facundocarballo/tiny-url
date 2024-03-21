@@ -10,17 +10,23 @@ export class TinyMongoDB implements TinyRepository {
   async Create(bigUrl: string): Promise<string | undefined> {
     try {
       const res = await counterService.Load();
-      if (!res || counterService.Get() === CounterService.DefaultValue())
-        return undefined;
+      if (!res) return undefined;
+
+      const id = counterService.Get();
+      if (id === CounterService.DefaultValue()) return undefined;
 
       const db = DatabaseConnection();
       if (!db) return undefined;
 
       const collection = db.collection("URL");
+      const shortUrl = counterService.GenerateShortUrl();
       await collection.insertOne({
-        shortUrl: counterService.GenerateShortUrl(),
-        bigUrl: bigUrl,
+        bigUrl,
+        id,
       });
+
+      if (!(await counterService.Increment())) return undefined;
+      return shortUrl;
     } catch (err) {
       console.error("Error inserting a new document to MongoDB. ", err);
       return undefined;

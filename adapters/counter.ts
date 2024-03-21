@@ -17,7 +17,24 @@ export class CounterMongoDB implements CounterRepository {
       return undefined;
     }
   }
-  Save(value: string): Promise<string | undefined> {
-    throw new Error("Method not implemented.");
+  async Save(value: string): Promise<string | undefined> {
+    const db = DatabaseConnection();
+    if (!db) return undefined;
+    try {
+      const collection = db.collection("Counter");
+      const objId = new ObjectId(COUNTER_DOC_ID);
+      await collection.updateOne(
+        { _id: objId },
+        {
+          $set: {
+            value,
+          },
+        }
+      );
+    } catch (err) {
+      console.error("Error reading the database. ", err);
+      return undefined;
+    }
+    return value;
   }
 }
